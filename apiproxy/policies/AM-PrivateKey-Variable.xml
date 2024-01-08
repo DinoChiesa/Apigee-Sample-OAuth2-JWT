@@ -1,0 +1,14 @@
+<AssignMessage name="AM-PrivateKey-Variable">
+  <!--
+      This merely assigns from one variable to another.
+      The only effect is that accesses of `private.rsa-1-private` will
+      not appear in debugsessions (Trace).
+      Ideally you'd retrieve this private variable from KVM, and not use the
+      properties file to store secrets.
+  -->
+
+    <AssignVariable>
+        <Name>private.rsa-1-private</Name>
+        <Ref>propertyset.example-settings.rsa-1-private</Ref>
+    </AssignVariable>
+</AssignMessage>

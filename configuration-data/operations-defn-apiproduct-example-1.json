@@ -1,0 +1,16 @@
+{
+  "operationConfigs": [
+    {
+      "apiSource": "oauth2-cc-jwt-mb1531",
+      "operations": [
+        {
+          "resource": "/**",
+          "methods": [
+            "GET"
+          ]
+        }
+      ]
+    }
+  ],
+  "operationConfigType": "proxy"
+}

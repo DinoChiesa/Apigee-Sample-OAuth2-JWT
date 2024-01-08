@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndpoint name="verifier">
+  <Description>the proxy that verifies tokens</Description>
+
+  <HTTPProxyConnection>
+    <BasePath>/oauth2-cc-jwt-mb1531-token-verifier</BasePath>
+    <Properties/>
+  </HTTPProxyConnection>
+
+  <FaultRules/>
+
+  <DefaultFaultRule name="fault-rule">
+    <Step>
+      <Name>AM-Inject-Proxy-Revision-Header</Name>
+    </Step>
+    <AlwaysEnforce>true</AlwaysEnforce>
+  </DefaultFaultRule>
+
+  <PreFlow name="PreFlow">
+    <Request/>
+    <Response/>
+  </PreFlow>
+
+  <PostFlow name="PostFlow">
+    <Request/>
+    <Response>
+      <Step>
+        <Name>AM-Clean-Response-Headers</Name>
+      </Step>
+      <Step>
+        <Name>AM-Inject-Proxy-Revision-Header</Name>
+      </Step>
+    </Response>
+  </PostFlow>
+
+  <Flows>
+    <Flow name="an-API-request">
+      <Description>verify a JWT-format access token</Description>
+      <!--
+          An example request is like this:
+
+          curl -i -X GET \
+            -H "Authorization: Bearer $JWT" \
+            "$endpoint/oauth2-cc-jwt-mb1531-token-verifier/check"
+
+      -->
+      <Request>
+        <Step>
+          <Name>AM-PublicKey-Variable</Name>
+        </Step>
+        <Step>
+          <Name>OAuthV2-VerifyJWT-AT</Name>
+        </Step>
+      </Request>
+      <Response>
+        <Step>
+          <Name>AM-Response</Name>
+        </Step>
+      </Response>
+      <Condition>(proxy.pathsuffix MatchesPath "/check") and (request.verb = "GET")</Condition>
+    </Flow>
+
+    <Flow name="unknown request">
+      <Request>
+        <Step>
+          <Name>RF-Unknown-Request</Name>
+        </Step>
+      </Request>
+      <Response/>
+    </Flow>
+  </Flows>
+
+  <!-- There is no backend target. Responses for oauth token generation and
+       refresh are direct from this API proxy.
+  -->
+  <RouteRule name="NoRouteRule"/>
+</ProxyEndpoint>

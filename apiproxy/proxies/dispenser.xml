@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndpoint name="dispenser">
+  <Description>the proxy that dispenses tokens</Description>
+
+  <HTTPProxyConnection>
+    <BasePath>/oauth2-cc-jwt-mb1531-token-dispenser</BasePath>
+    <Properties/>
+  </HTTPProxyConnection>
+
+  <FaultRules/>
+
+  <DefaultFaultRule name="fault-rule">
+    <Step>
+      <Name>AM-Inject-Proxy-Revision-Header</Name>
+    </Step>
+    <AlwaysEnforce>true</AlwaysEnforce>
+  </DefaultFaultRule>
+
+  <PreFlow name="PreFlow">
+    <Request/>
+    <Response/>
+  </PreFlow>
+
+  <PostFlow name="PostFlow">
+    <Request/>
+    <Response>
+      <Step>
+        <Name>AM-Clean-Response-Headers</Name>
+      </Step>
+      <Step>
+        <Name>JS-Groom-Token-Response</Name>
+        <Condition>request.formparam.grant_type = "client_credentials"</Condition>
+      </Step>
+      <Step>
+        <Name>AM-Inject-Proxy-Revision-Header</Name>
+      </Step>
+      <Step>
+        <Name>AM-TokenHeader</Name>
+        <Condition>apigee.access_token != null</Condition>
+      </Step>
+    </Response>
+  </PostFlow>
+
+  <Flows>
+    <Flow name="request-for-JWT-token">
+      <Description>dispense JWT for OAuth2.0, for Client credentials</Description>
+      <!--
+          An example request is like this:
+
+          curl -i -X POST -H 'content-type: application/x-www-form-urlencoded' \
+            -u ${client_id}:${client_secret} \
+            "$endpoint/oauth2-cc-jwt-mb1531-token-dispenser/token" \
+            -d 'grant_type=client_credentials'
+
+          The resulting token will have an expiry, and a set of metadata.
+
+      -->
+      <Request>
+        <Step>
+          <!-- does the inbound request include a grant_type? -->
+          <Name>RF-Invalid-Grant-Type</Name>
+          <Condition>request.formparam.grant_type != "client_credentials"</Condition>
+        </Step>
+        <Step>
+          <Name>AM-PrivateKey-Variable</Name>
+        </Step>
+        <Step>
+          <!-- this policy generates a payload -->
+          <Name>OAuthV2-GenerateJWT-AT-CC</Name>
+        </Step>
+      </Request>
+      <Response/>
+      <Condition>(proxy.pathsuffix MatchesPath "/token") and (request.verb = "POST")</Condition>
+    </Flow>
+
+    <Flow name="unknown request">
+      <Request>
+        <Step>
+          <Name>RF-Unknown-Request</Name>
+        </Step>
+      </Request>
+      <Response/>
+    </Flow>
+  </Flows>
+
+  <!-- There is no backend target. Responses for oauth token generation and
+       refresh are direct from this API proxy.
+  -->
+  <RouteRule name="NoRouteRule"/>
+</ProxyEndpoint>

@@ -1,0 +1,6 @@
+<AssignMessage name='AM-Clean-Response-Headers'>
+  <Remove>
+    <Headers/>
+  </Remove>
+  <AssignTo>response</AssignTo>
+</AssignMessage>

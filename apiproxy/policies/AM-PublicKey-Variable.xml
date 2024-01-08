@@ -1,0 +1,10 @@
+<AssignMessage name="AM-PublicKey-Variable">
+  <!--
+      This merely assigns from one variable to another.
+  -->
+
+    <AssignVariable>
+        <Name>rsa-1-public</Name>
+        <Ref>propertyset.example-settings.rsa-1-public</Ref>
+    </AssignVariable>
+</AssignMessage>

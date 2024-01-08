@@ -1,0 +1,7 @@
+<OAuthV2 name="OAuthV2-VerifyJWT-AT">
+  <Operation>VerifyJWTAccessToken</Operation>
+  <Algorithm>RS256</Algorithm>
+  <PublicKey>
+    <Value ref="rsa-1-public"/>
+  </PublicKey>
+</OAuthV2>
