@@ -35,7 +35,7 @@ This code is open source but you don't need to compile it in order to use it.
 - the `gcloud` command
 - the `curl` command
 
-All of these are provided for you, free, if you use [Google Cloud Shell](https://cloud.google.com/shell).
+All of these are provided for you, free, if you use [Google Cloud Shell](https://cloud.google.com gle.com/shell).
 
 ### Steps
 
